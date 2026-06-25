@@ -1,55 +1,92 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+import { Container } from "@/components/ui/Container";
+import { Header } from "@/components/ui/Header";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
+
+type Case = {
+  _id: string;
+  fullName: string;
+  city: string;
+  state: string;
+  status: string;
+};
 
 export default function Home() {
+  const [search, setSearch] = useState("");
+  const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(false);
 
-  async function createCase() {
-    setLoading(true);
+  useEffect(() => {
+    async function loadCases() {
+      setLoading(true);
 
-    await fetch("/api/cases", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fullName: "María González",
-        age: 38,
-        gender: "female",
+      const res = await fetch(`/api/cases?q=${encodeURIComponent(search)}`);
 
-        city: "Valencia",
-        state: "Carabobo",
-        country: "Venezuela",
+      const data = await res.json();
 
-        lastSeenLocation: "Centro de Valencia",
+      setCases(data);
 
-        lastSeenAt: new Date(),
+      setLoading(false);
+    }
 
-        description: "Vista por última vez cerca de la plaza.",
-
-        contactName: "José González",
-
-        contactPhone: "+584121234567",
-
-        contactEmail: "jose@email.com",
-      }),
-    });
-
-    alert("Caso creado");
-
-    setLoading(false);
-  }
+    loadCases();
+  }, [search]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <button
-        onClick={createCase}
-        disabled={loading}
-        className="rounded bg-blue-600 px-6 py-3 font-bold text-white"
-      >
-        {loading ? "Guardando..." : "Crear Caso de Prueba"}
-      </button>
-    </main>
+    <Container>
+      <Header />
+
+      <section className="mb-10">
+        <Input
+          placeholder="Nombre y apellido de la persona"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </section>
+
+      {loading ? (
+        <p className="text-center text-slate-500">Buscando...</p>
+      ) : cases.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="space-y-4">
+          {cases.map((item) => (
+            <Card key={item._id}>
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold">{item.fullName}</h2>
+
+                  <p className="text-slate-600">
+                    📍 {item.city}, {item.state}
+                  </p>
+
+                  <div className="mt-3">
+                    <Badge status={item.status} />
+                  </div>
+                </div>
+
+                <Link href={`/case/${item._id}`}>
+                  <Button className="w-auto px-5">Ver</Button>
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-10">
+        <Link href="/report">
+          <Button>Reportar una persona desaparecida</Button>
+        </Link>
+      </div>
+    </Container>
   );
 }

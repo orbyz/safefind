@@ -5,13 +5,24 @@ import type { CaseData } from "../domain/case.types";
 export async function createCase(data: CaseData) {
   await connectDB();
 
-  return await CaseModel.create(data);
+  return CaseModel.create(data);
 }
 
-export async function getCases() {
+export async function getCases(search?: string) {
   await connectDB();
 
-  return await CaseModel.find().sort({
+  if (search?.trim()) {
+    return CaseModel.find({
+      fullName: {
+        $regex: search,
+        $options: "i",
+      },
+    }).sort({
+      createdAt: -1,
+    });
+  }
+
+  return CaseModel.find().sort({
     createdAt: -1,
   });
 }

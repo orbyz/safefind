@@ -1,10 +1,10 @@
-import { createCase, getCases } from "../infrastructure/case.repository";
 import type { CaseData } from "../domain/case.types";
+import { createCase, getCases } from "../infrastructure/case.repository";
 
-export async function createCaseService(data: CaseData) {
+export function createCaseService(data: CaseData) {
   return createCase(data);
 }
 
-export async function getCasesService() {
-  return getCases();
+export function getCasesService(search?: string) {
+  return getCases(search);
 }

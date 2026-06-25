@@ -5,8 +5,12 @@ import {
   getCasesService,
 } from "@/modules/cases/application/case.service";
 
-export async function GET() {
-  const data = await getCasesService();
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+
+  const q = searchParams.get("q") ?? "";
+
+  const data = await getCasesService(q);
 
   return NextResponse.json(data);
 }
