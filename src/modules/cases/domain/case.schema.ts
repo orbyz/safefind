@@ -38,4 +38,4 @@ export const reportSchema = z.object({
     .default(REPORT_STATUS.PENDING),
 });
 
-export type ReportInput = z.infer<typeof reportSchema>;
+export type CaseInput = z.infer<typeof reportSchema>;
