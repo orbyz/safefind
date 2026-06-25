@@ -1,10 +1,13 @@
 export const REPORT_STATUS = {
   PENDING: "pending",
   VERIFIED: "verified",
-  RESOLVED: "resolved",
+  FOUND: "found",
+  CLOSED: "closed",
 } as const;
 
-export const REPORT_TYPE = {
-  MISSING: "missing",
-  FOUND: "found",
+export const GENDER = {
+  MALE: "male",
+  FEMALE: "female",
+  OTHER: "other",
+  UNKNOWN: "unknown",
 } as const;
