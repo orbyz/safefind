@@ -62,6 +62,17 @@ const CaseSchema = new Schema(
 
     contactEmail: String,
 
+    searchName: {
+      type: String,
+      required: true,
+      index: true,
+    },
+
+    searchCity: {
+      type: String,
+      required: true,
+    },
+
     status: {
       type: String,
       enum: ["pending", "verified", "found", "closed"],

@@ -1,60 +1,87 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/Input";
+
+import { DuplicateWarning } from "@/components/report/DuplicateWarning";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+
+type MatchCase = {
+  _id: string;
+  fullName: string;
+  city: string;
+  state: string;
+  status: string;
+};
+
+const initialForm = {
+  fullName: "",
+  city: "",
+  state: "",
+  lastSeenLocation: "",
+  description: "",
+  contactName: "",
+  contactPhone: "",
+  photo: "",
+};
 
 export default function ReportPage() {
   const [loading, setLoading] = useState(false);
+  const [matches, setMatches] = useState<MatchCase[]>([]);
+  const [ignoreMatches, setIgnoreMatches] = useState(false);
+  const [form, setForm] = useState(initialForm);
 
-  const [form, setForm] = useState({
-    fullName: "",
-    city: "",
-    state: "",
-    lastSeenLocation: "",
-    description: "",
-    contactName: "",
-    contactPhone: "",
-    photo: "",
-  });
+  const hasDuplicates = matches.length > 0 && !ignoreMatches;
 
-  function update(field: string, value: string) {
+  async function update(field: string, value: string) {
     setForm((prev) => ({
       ...prev,
       [field]: value,
     }));
+
+    if (field !== "fullName") return;
+
+    setIgnoreMatches(false);
+
+    if (value.trim().length < 3) {
+      setMatches([]);
+      return;
+    }
+
+    const res = await fetch(
+      `/api/cases/check?name=${encodeURIComponent(value)}`,
+    );
+
+    const data: MatchCase[] = await res.json();
+
+    setMatches(data);
   }
 
   async function submit() {
     setLoading(true);
 
-    await fetch("/api/cases", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...form,
-        country: "Venezuela",
-        gender: "unknown",
-        lastSeenAt: new Date(),
-      }),
-    });
+    try {
+      await fetch("/api/cases", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          country: "Venezuela",
+          gender: "unknown",
+          lastSeenAt: new Date(),
+        }),
+      });
 
-    setForm({
-      fullName: "",
-      city: "",
-      state: "",
-      lastSeenLocation: "",
-      description: "",
-      contactName: "",
-      contactPhone: "",
-      photo: "",
-    });
+      setForm(initialForm);
+      setMatches([]);
+      setIgnoreMatches(false);
 
-    alert("Caso enviado correctamente.");
-
-    setLoading(false);
+      alert("Caso enviado correctamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -67,49 +94,63 @@ export default function ReportPage() {
         onChange={(e) => update("fullName", e.target.value)}
       />
 
+      {hasDuplicates && (
+        <DuplicateWarning
+          matches={matches}
+          onContinue={() => setIgnoreMatches(true)}
+        />
+      )}
+
       <Input
         placeholder="Ciudad"
         value={form.city}
+        disabled={hasDuplicates}
         onChange={(e) => update("city", e.target.value)}
       />
 
       <Input
         placeholder="Estado"
         value={form.state}
+        disabled={hasDuplicates}
         onChange={(e) => update("state", e.target.value)}
       />
 
       <Input
         placeholder="Último lugar donde fue vista"
         value={form.lastSeenLocation}
+        disabled={hasDuplicates}
         onChange={(e) => update("lastSeenLocation", e.target.value)}
       />
 
       <Input
         placeholder="Descripción"
         value={form.description}
+        disabled={hasDuplicates}
         onChange={(e) => update("description", e.target.value)}
       />
 
       <Input
         placeholder="URL de la fotografía (temporal)"
         value={form.photo}
+        disabled={hasDuplicates}
         onChange={(e) => update("photo", e.target.value)}
       />
 
       <Input
         placeholder="Nombre del contacto"
         value={form.contactName}
+        disabled={hasDuplicates}
         onChange={(e) => update("contactName", e.target.value)}
       />
 
       <Input
         placeholder="Teléfono"
         value={form.contactPhone}
+        disabled={hasDuplicates}
         onChange={(e) => update("contactPhone", e.target.value)}
       />
 
-      <Button onClick={submit} disabled={loading}>
+      <Button onClick={submit} disabled={loading || hasDuplicates}>
         {loading ? "Enviando..." : "Reportar persona"}
       </Button>
     </main>

@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { ShareButtons } from "@/components/case/ShareButtons";
+import { formatDate } from "@/lib/utils/date";
+import { getStatusLabel } from "@/lib/utils/status";
 
 type Props = {
   params: Promise<{
@@ -43,6 +45,11 @@ export default async function CasePage({ params }: Props) {
         </div>
       )}
       <h1 className="text-3xl font-bold">{person.fullName}</h1>
+      <p className="mt-2 text-lg">{getStatusLabel(person.status)}</p>
+
+      <p className="text-sm text-slate-500">
+        Reportado el {formatDate(person.createdAt)}
+      </p>
 
       <div className="mt-6 space-y-6">
         <section className="rounded-xl border p-5">

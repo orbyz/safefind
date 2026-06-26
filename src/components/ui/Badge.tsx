@@ -1,3 +1,5 @@
+import { getStatusLabel } from "@/lib/utils/status";
+
 type Props = {
   status: string;
 };
@@ -10,9 +12,5 @@ const labels = {
 };
 
 export function Badge({ status }: Props) {
-  return (
-    <span className="text-sm font-medium">
-      {labels[status as keyof typeof labels] ?? status}
-    </span>
-  );
+  return <span className="text-sm font-medium">{getStatusLabel(status)}</span>;
 }
