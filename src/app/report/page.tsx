@@ -15,6 +15,7 @@ export default function ReportPage() {
     description: "",
     contactName: "",
     contactPhone: "",
+    photo: "",
   });
 
   function update(field: string, value: string) {
@@ -48,6 +49,7 @@ export default function ReportPage() {
       description: "",
       contactName: "",
       contactPhone: "",
+      photo: "",
     });
 
     alert("Caso enviado correctamente.");
@@ -87,6 +89,12 @@ export default function ReportPage() {
         placeholder="Descripción"
         value={form.description}
         onChange={(e) => update("description", e.target.value)}
+      />
+
+      <Input
+        placeholder="URL de la fotografía (temporal)"
+        value={form.photo}
+        onChange={(e) => update("photo", e.target.value)}
       />
 
       <Input

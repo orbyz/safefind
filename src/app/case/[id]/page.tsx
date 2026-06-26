@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
+import { ShareButtons } from "@/components/case/ShareButtons";
 
 type Props = {
   params: Promise<{
@@ -27,33 +29,47 @@ export default async function CasePage({ params }: Props) {
 
   return (
     <main className="mx-auto max-w-3xl p-6">
+      {person.photo ? (
+        <Image
+          src={person.photo}
+          alt={person.fullName}
+          width={1200}
+          height={800}
+          className="mb-6 h-64 w-full rounded-xl object-cover"
+        />
+      ) : (
+        <div className="mb-6 flex h-64 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+          Sin fotografía
+        </div>
+      )}
       <h1 className="text-3xl font-bold">{person.fullName}</h1>
 
-      <div className="mt-6 space-y-3">
-        <p>
-          <strong>Ciudad:</strong> {person.city}
-        </p>
+      <div className="mt-6 space-y-6">
+        <section className="rounded-xl border p-5">
+          <h2 className="mb-2 text-lg font-semibold">
+            📍 Última ubicación conocida
+          </h2>
 
-        <p>
-          <strong>Estado:</strong> {person.state}
-        </p>
+          <p>{person.lastSeenLocation}</p>
+          <p className="text-sm text-slate-500">
+            {person.city}, {person.state}
+          </p>
+        </section>
 
-        <p>
-          <strong>Última ubicación:</strong> {person.lastSeenLocation}
-        </p>
+        <section className="rounded-xl border p-5">
+          <h2 className="mb-2 text-lg font-semibold">📝 Descripción</h2>
 
-        <p>
-          <strong>Descripción:</strong> {person.description}
-        </p>
+          <p>{person.description || "Sin descripción."}</p>
+        </section>
 
-        <p>
-          <strong>Contacto:</strong> {person.contactName}
-        </p>
+        <section className="rounded-xl border p-5">
+          <h2 className="mb-2 text-lg font-semibold">☎ Persona de contacto</h2>
 
-        <p>
-          <strong>Teléfono:</strong> {person.contactPhone}
-        </p>
+          <p>{person.contactName}</p>
+          <p>{person.contactPhone}</p>
+        </section>
       </div>
+      <ShareButtons id={person._id} fullName={person.fullName} />
     </main>
   );
 }

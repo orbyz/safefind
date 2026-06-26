@@ -45,7 +45,10 @@ const CaseSchema = new Schema(
       default: "",
     },
 
-    photo: String,
+    photo: {
+      type: String,
+      default: "",
+    },
 
     contactName: {
       type: String,
