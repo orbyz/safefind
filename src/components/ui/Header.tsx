@@ -1,11 +1,9 @@
 export function Header() {
   return (
     <header className="mb-10 rounded-xl border border-blue-200 bg-blue-50 p-8 text-center">
-      <h1 className="text-4xl font-bold text-blue-900">SafeFind</h1>
+      <h1 className="text-4xl font-bold text-blue-900">SafeFind Venezuela</h1>
 
-      <p className="mt-2 text-lg text-slate-700">
-        Centro ciudadano de búsqueda de personas
-      </p>
+      <p className="mt-2 text-lg text-slate-700">Ayudando a reunir familias</p>
 
       <p className="mt-4 text-sm text-slate-600">🇻🇪 Terremoto en Venezuela</p>
 

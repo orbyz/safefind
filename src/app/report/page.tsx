@@ -5,6 +5,7 @@ import { useState } from "react";
 import { DuplicateWarning } from "@/components/report/DuplicateWarning";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { PhotoUploader } from "@/components/report/PhotoUploader";
 
 type MatchCase = {
   _id: string;
@@ -78,6 +79,8 @@ export default function ReportPage() {
       setMatches([]);
       setIgnoreMatches(false);
 
+      window.dispatchEvent(new Event("stats-updated"));
+
       alert("Caso enviado correctamente.");
     } finally {
       setLoading(false);
@@ -129,11 +132,9 @@ export default function ReportPage() {
         onChange={(e) => update("description", e.target.value)}
       />
 
-      <Input
-        placeholder="URL de la fotografía (temporal)"
+      <PhotoUploader
         value={form.photo}
-        disabled={hasDuplicates}
-        onChange={(e) => update("photo", e.target.value)}
+        onChange={(url) => update("photo", url)}
       />
 
       <Input
