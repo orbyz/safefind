@@ -11,9 +11,12 @@ type Props = {
 };
 
 async function getCase(id: string) {
-  const res = await fetch(`http://localhost:3000/api/cases/${id}`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/cases/${id}`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) return null;
 
