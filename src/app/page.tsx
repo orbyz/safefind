@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { Container } from "@/components/ui/Container";
-import { Header } from "@/components/ui/Header";
-import { Input } from "@/components/ui/Input";
+import { Hero } from "@/components/home/Hero";
+import { Stats } from "@/components/home/Stats";
+import { Emergency } from "@/components/home/Emergency";
+import { CaseGrid } from "@/components/home/CaseGrid";
+
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Input } from "@/components/ui/Input";
 
 type Case = {
   _id: string;
@@ -17,6 +19,9 @@ type Case = {
   city: string;
   state: string;
   status: string;
+  photo?: string;
+  description?: string;
+  lastSeenLocation?: string;
 };
 
 export default function Home() {
@@ -28,13 +33,24 @@ export default function Home() {
     async function loadCases() {
       setLoading(true);
 
-      const res = await fetch(`/api/cases?q=${encodeURIComponent(search)}`);
+      try {
+        const res = await fetch(`/api/cases?q=${encodeURIComponent(search)}`, {
+          cache: "no-store",
+        });
 
-      const data = await res.json();
+        if (!res.ok) {
+          throw new Error("No se pudieron cargar los casos.");
+        }
 
-      setCases(data);
+        const data: Case[] = await res.json();
 
-      setLoading(false);
+        setCases(data);
+      } catch (error) {
+        console.error(error);
+        setCases([]);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadCases();
@@ -42,51 +58,67 @@ export default function Home() {
 
   return (
     <Container>
-      <Header />
+      <Hero />
 
-      <section className="mb-10">
-        <Input
-          placeholder="Nombre y apellido de la persona"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <Stats />
+
+      <section
+        id="buscador"
+        className="mb-12 rounded-2xl border bg-white p-8 shadow-sm"
+      >
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold">Buscar una persona</h2>
+
+          <p className="mt-3 text-slate-600">
+            Introduce el nombre o apellido para comprobar si la persona ya ha
+            sido reportada.
+          </p>
+
+          <div className="mt-6">
+            <Input
+              placeholder="Nombre y apellido..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
       </section>
 
       {loading ? (
-        <p className="text-center text-slate-500">Buscando...</p>
+        <div className="py-16 text-center text-slate-500">
+          Buscando personas...
+        </div>
       ) : cases.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="space-y-4">
-          {cases.map((item) => (
-            <Card key={item._id}>
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">{item.fullName}</h2>
+        <>
+          <section className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold">Personas registradas</h2>
 
-                  <p className="text-slate-600">
-                    📍 {item.city}, {item.state}
-                  </p>
+              <p className="text-slate-500">
+                {cases.length} caso
+                {cases.length !== 1 ? "s" : ""} encontrado
+                {cases.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+          </section>
 
-                  <div className="mt-3">
-                    <Badge status={item.status} />
-                  </div>
-                </div>
-
-                <Link href={`/case/${item._id}`}>
-                  <Button className="w-auto px-5">Ver</Button>
-                </Link>
-              </div>
-            </Card>
-          ))}
-        </div>
+          <CaseGrid cases={cases} />
+        </>
       )}
 
-      <div className="mt-10">
+      <section className="mt-16">
+        <Emergency />
+      </section>
+
+      <section className="mt-12 flex justify-center">
         <Link href="/report">
-          <Button>Reportar una persona desaparecida</Button>
+          <Button className="px-8 py-3">
+            Reportar una persona desaparecida
+          </Button>
         </Link>
-      </div>
+      </section>
     </Container>
   );
 }

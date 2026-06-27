@@ -8,9 +8,11 @@ export function Button({ className = "", ...props }: ButtonProps) {
         rounded-lg
         bg-blue-600
         py-3
+        px-5
         font-semibold
         text-white
-        hover:bg-blue-700
+        hover:bg-blue-400
+        hover:cursor-pointer
         transition
         ${className}
       `}
