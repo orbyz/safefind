@@ -1,21 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { timeAgo } from "@/lib/utils/timeAgo";
+
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import type { CaseDTO } from "@/modules/cases/domain/case.dto";
 
 type Props = {
-  person: {
-    _id: string;
-    fullName: string;
-    city: string;
-    state: string;
-    status: string;
-    photo?: string;
-    description?: string;
-    lastSeenLocation?: string;
-  };
+  person: CaseDTO;
 };
 
 export function CaseCard({ person }: Props) {
@@ -41,6 +35,10 @@ export function CaseCard({ person }: Props) {
 
           <p className="mt-2 text-sm text-slate-500">
             📍 {person.city}, {person.state}
+          </p>
+
+          <p className="mt-3 text-sm text-slate-500">
+            📅 {timeAgo(person.createdAt)}
           </p>
 
           {person.lastSeenLocation && (

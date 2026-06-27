@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { getCaseByIdService } from "@/modules/cases/application/case.service";
 import { CaseDetail } from "@/components/case/CaseDetail";
 
 type Props = {
@@ -8,25 +9,10 @@ type Props = {
   }>;
 };
 
-async function getCase(id: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/cases/${id}`,
-    {
-      cache: "no-store",
-    },
-  );
-
-  if (!res.ok) {
-    return null;
-  }
-
-  return res.json();
-}
-
 export default async function CasePage({ params }: Props) {
   const { id } = await params;
 
-  const person = await getCase(id);
+  const person = await getCaseByIdService(id);
 
   if (!person) {
     notFound();

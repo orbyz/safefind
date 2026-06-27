@@ -3,20 +3,10 @@
 import { useState } from "react";
 
 import { CaseCard } from "./CaseCard";
-
-type Case = {
-  _id: string;
-  fullName: string;
-  city: string;
-  state: string;
-  status: string;
-  photo?: string;
-  description?: string;
-  lastSeenLocation?: string;
-};
+import type { CaseDTO } from "@/modules/cases/domain/case.dto";
 
 type Props = {
-  cases: Case[];
+  cases: CaseDTO[];
 };
 
 export function CaseGrid({ cases }: Props) {

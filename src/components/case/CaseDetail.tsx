@@ -4,24 +4,13 @@ import { CaseActions } from "@/components/case/CaseActions";
 import { ShareButtons } from "@/components/case/ShareButtons";
 import { SightingCard } from "@/components/case/SightingCard";
 import { CaseTimeline } from "@/components/case/CaseTimeline";
+import type { CaseDTO } from "@/modules/cases/domain/case.dto";
 
 import { formatDate } from "@/lib/utils/date";
 import { getStatusLabel } from "@/lib/utils/status";
 
 type Props = {
-  person: {
-    _id: string;
-    fullName: string;
-    status: string;
-    photo?: string;
-    createdAt: string;
-    lastSeenLocation?: string;
-    city: string;
-    state: string;
-    description?: string;
-    contactName?: string;
-    contactPhone?: string;
-  };
+  person: CaseDTO;
 };
 
 export function CaseDetail({ person }: Props) {

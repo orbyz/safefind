@@ -7,26 +7,19 @@ import { Hero } from "@/components/home/Hero";
 import { Stats } from "@/components/home/Stats";
 import { Emergency } from "@/components/home/Emergency";
 import { CaseGrid } from "@/components/home/CaseGrid";
+import { CaseFilters } from "@/components/home/CaseFilters";
+import { CaseSkeleton } from "@/components/home/CaseSkeleton";
+import type { CaseDTO } from "@/modules/cases/domain/case.dto";
 
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
 
-type Case = {
-  _id: string;
-  fullName: string;
-  city: string;
-  state: string;
-  status: string;
-  photo?: string;
-  description?: string;
-  lastSeenLocation?: string;
-};
-
 export default function Home() {
+  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
-  const [cases, setCases] = useState<Case[]>([]);
+  const [cases, setCases] = useState<CaseDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -45,7 +38,7 @@ export default function Home() {
           throw new Error("No se pudieron cargar los casos.");
         }
 
-        const data: Case[] = await res.json();
+        const data: CaseDTO[] = await res.json();
 
         setCases(data);
       } catch (error) {
@@ -58,6 +51,9 @@ export default function Home() {
 
     loadCases();
   }, [search]);
+
+  const filteredCases =
+    status === "" ? cases : cases.filter((item) => item.status === status);
 
   return (
     <Container>
@@ -87,10 +83,14 @@ export default function Home() {
         </div>
       </section>
 
+      <CaseFilters value={status} onChange={setStatus} />
+
       {loading ? (
-        <div className="py-16 text-center text-slate-500">
-          Buscando personas...
-        </div>
+        <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <CaseSkeleton key={index} />
+          ))}
+        </section>
       ) : cases.length === 0 ? (
         <EmptyState />
       ) : (
@@ -107,7 +107,7 @@ export default function Home() {
             </div>
           </section>
 
-          <CaseGrid cases={cases} />
+          <CaseGrid cases={filteredCases} />
         </>
       )}
 
