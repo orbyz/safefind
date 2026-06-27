@@ -5,6 +5,6 @@ export function createCaseService(data: CaseData) {
   return createCase(data);
 }
 
-export function getCasesService(search?: string) {
-  return getCases(search);
+export async function getCasesService(search?: string, limit?: number) {
+  return getCases(search, limit);
 }

@@ -1,35 +1,33 @@
 import { connectDB } from "@/lib/db/db";
 import { CaseModel } from "./case.model";
+
 import type { CaseData } from "../domain/case.types";
-import { normalizeText } from "@/lib/utils/normalize";
 
 export async function createCase(data: CaseData) {
   await connectDB();
 
-  return CaseModel.create({
-    ...data,
-    searchName: normalizeText(data.fullName),
-    searchCity: normalizeText(data.city),
-  });
+  return CaseModel.create(data);
 }
 
-export async function getCases(search?: string) {
+export async function getCases(search?: string, limit = 9) {
   await connectDB();
 
   if (search?.trim()) {
-    const normalized = normalizeText(search);
-
     return CaseModel.find({
-      searchName: {
-        $regex: normalized,
+      fullName: {
+        $regex: search,
         $options: "i",
       },
-    }).sort({
-      createdAt: -1,
-    });
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .limit(limit);
   }
 
-  return CaseModel.find().sort({
-    createdAt: -1,
-  });
+  return CaseModel.find()
+    .sort({
+      createdAt: -1,
+    })
+    .limit(limit);
 }

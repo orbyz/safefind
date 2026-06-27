@@ -34,9 +34,12 @@ export default function Home() {
       setLoading(true);
 
       try {
-        const res = await fetch(`/api/cases?q=${encodeURIComponent(search)}`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `/api/cases?q=${encodeURIComponent(search)}&limit=9`,
+          {
+            cache: "no-store",
+          },
+        );
 
         if (!res.ok) {
           throw new Error("No se pudieron cargar los casos.");

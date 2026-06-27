@@ -10,13 +10,15 @@ export async function GET(request: Request) {
 
   const q = searchParams.get("q") ?? "";
 
-  const data = await getCasesService(q);
+  const limit = Number(searchParams.get("limit") ?? "9");
+
+  const data = await getCasesService(q, limit);
 
   return NextResponse.json(data);
 }
 
-export async function POST(req: Request) {
-  const body = await req.json();
+export async function POST(request: Request) {
+  const body = await request.json();
 
   const data = await createCaseService(body);
 
