@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CaseActions } from "@/components/case/CaseActions";
 import { ShareButtons } from "@/components/case/ShareButtons";
 import { SightingCard } from "@/components/case/SightingCard";
+import { CaseTimeline } from "@/components/case/CaseTimeline";
 
 import { formatDate } from "@/lib/utils/date";
 import { getStatusLabel } from "@/lib/utils/status";
@@ -76,6 +77,8 @@ export function CaseDetail({ person }: Props) {
               {person.description || "Sin descripción disponible."}
             </p>
           </section>
+
+          <CaseTimeline createdAt={person.createdAt} />
 
           <section className="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold">☎ Persona de contacto</h2>
